@@ -131,6 +131,36 @@ A scikit-learn `ColumnTransformer` ensures reproducibility:
 
 ## 📊 Evaluation Results
 
+## 📈 Exploratory Visual Insights
+
+### Churn Distribution
+![Churn Distribution](plots/churn_distribution.png)
+
+### Demographic Influence
+![Age by Churn](plots/Age_by_churn.png)
+![Amount Spent by Churn](plots/AmountSpent_by_churn.png)
+
+### Behavioural Signals
+![Login Frequency by Churn](plots/LoginFrequency_by_churn.png)
+
+### Feature Distributions
+![Age Distribution](plots/hist_Age.png)
+![Amount Spent Distribution](plots/hist_AmountSpent.png)
+![Login Frequency Distribution](plots/hist_LoginFrequency.png)
+
+### Categorical Churn Rates
+![Churn Rate by Gender](plots/churn_rate_Gender.png)
+![Churn Rate by Income Level](plots/churn_rate_IncomeLevel.png)
+![Churn Rate by Interaction Type](plots/churn_rate_InteractionType.png)
+![Churn Rate by Marital Status](plots/churn_rate_MaritalStatus.png)
+![Churn Rate by Product Category](plots/churn_rate_ProductCategory.png)
+![Churn Rate by Resolution Status](plots/churn_rate_ResolutionStatus.png)
+![Churn Rate by Service Usage](plots/churn_rate_ServiceUsage.png)
+
+### Data Quality
+![Missing Values](plots/missing_values.png)
+
+
 **Test Performance**
 
 - ROC-AUC ≈ **0.60**
