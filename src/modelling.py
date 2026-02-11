@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -8,6 +8,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, roc_auc_score, confusion_matrix
+from sklearn.metrics import RocCurveDisplay, ConfusionMatrixDisplay
+
 
 # ------------------------------
 # 1) Load data
@@ -130,3 +132,77 @@ print(importance.head(10))
 
 print("\nTop 10 negative (decrease churn probability):")
 print(importance.tail(10))
+print(confusion_matrix(y_test, y_pred))
+
+
+# ------------------------------
+# SAVE MODEL EVALUATION PLOTS
+# ------------------------------
+from pathlib import Path
+
+PLOTS_DIR = Path("plots")
+PLOTS_DIR.mkdir(exist_ok=True)
+
+# 1) ROC Curve
+plt.figure()
+RocCurveDisplay.from_predictions(y_test, y_prob)
+plt.title("ROC Curve - Logistic Regression")
+plt.savefig(PLOTS_DIR / "roc_curve.png", dpi=150, bbox_inches="tight")
+plt.close()
+
+# 2) Confusion Matrix (visual)
+plt.figure()
+ConfusionMatrixDisplay.from_predictions(y_test, y_pred)
+plt.title("Confusion Matrix - Logistic Regression")
+plt.savefig(PLOTS_DIR / "confusion_matrix.png", dpi=150, bbox_inches="tight")
+plt.close()
+
+# 3) Feature importance plot (Top 15 by absolute coefficient)
+importance_plot = importance.copy()
+importance_plot["abs_coef"] = importance_plot["coefficient"].abs()
+top = importance_plot.sort_values("abs_coef", ascending=False).head(15)
+
+plt.figure(figsize=(10, 6))
+plt.barh(top["feature"][::-1], top["coefficient"][::-1])
+plt.title("Top 15 Features (Logistic Regression Coefficients)")
+plt.xlabel("Coefficient")
+plt.ylabel("Feature")
+plt.savefig(PLOTS_DIR / "feature_importance_top15.png", dpi=150, bbox_inches="tight")
+plt.close()
+
+# 4) ROC Curve plot
+from sklearn.metrics import roc_curve, roc_auc_score, RocCurveDisplay
+
+fpr, tpr, _ = roc_curve(y_test, y_prob)
+
+# ADD THIS LINE
+roc_auc = roc_auc_score(y_test, y_prob)
+
+plt.figure()
+disp = RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc,
+                       name="Logistic Regression")
+
+disp.plot()
+plt.title("ROC Curve - Logistic Regression")
+
+plt.savefig(PLOTS_DIR / "roc_curve.png", dpi=150, bbox_inches="tight")
+plt.close()
+
+from sklearn.metrics import precision_recall_curve, auc
+
+prec, rec, _ = precision_recall_curve(y_test, y_prob)
+pr_auc = auc(rec, prec)
+
+plt.figure()
+plt.plot(rec, prec, label=f"PR-AUC = {pr_auc:.3f}")
+plt.xlabel("Recall")
+plt.ylabel("Precision")
+plt.title("Precision-Recall Curve")
+plt.legend()
+
+plt.savefig(PLOTS_DIR / "pr_curve.png", dpi=150, bbox_inches="tight")
+plt.close()
+
+
+
+print("\nSaved plots to:", PLOTS_DIR.resolve())
